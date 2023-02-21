@@ -62,6 +62,9 @@ class MeanShiftDetector : public Detector {
           Ret:
                Centroids of possibly interesting objects.
           */
+          if (N == 0)
+               return Eigen::MatrixXd::Zero(0, 2);
+
           // Scale timestamps.
           processTimestamps(events, N);
 

@@ -119,6 +119,9 @@ class KalmanNN : public Tracker {
           Ret:
                None. This function purely updates the state of the tracker.
           */
+          // Store IDs that need deregistering.
+          std::vector<int> rmIds;
+
           // Check if 'meas' is empty.
           if (meas.rows() == 0) {
                // Deregister objects if they are lost.
@@ -126,13 +129,17 @@ class KalmanNN : public Tracker {
                     int ID {targ->first};
                     ++numFramesLost[ID];
                     if (numFramesLost[ID] > maxNumFramesLost)
-                         deRegister(ID);
+                         rmIds.push_back(ID);
                     else {
                          // Evolve the targets in time. Use the predicted state as the measurement.
                          filters[ID].autoUpdate();
                          targets[ID] = (filters[ID].getCurrState())({0,1}, 0);
                     }
                }
+
+               // Deregister missing targets.
+               for (auto ID : rmIds)
+                    deRegister(ID);
 
                return;
           }
@@ -197,7 +204,7 @@ class KalmanNN : public Tracker {
                               ++numFramesLost[ID];
                               // Deregister missing targets.
                               if (numFramesLost[ID] > maxNumFramesLost) {
-                                   deRegister(ID);
+                                   rmIds.push_back(ID);
                               } else {
                                    filters[ID].autoUpdate();
                                    targets[ID] = (filters[ID].getCurrState())({0,1}, 0);
@@ -221,7 +228,7 @@ class KalmanNN : public Tracker {
                          int ID {targIDs[ridx]};
                          ++numFramesLost[ID];
                          if (numFramesLost[ID] > maxNumFramesLost) {
-                              deRegister(ID);
+                              rmIds.push_back(ID);
                          } else {
                               filters[ID].autoUpdate();
                               targets[ID] = (filters[ID].getCurrState())({0,1}, 0);
@@ -257,7 +264,7 @@ class KalmanNN : public Tracker {
                               ++numFramesLost[ID];
                               // Deregister if missing.
                               if (numFramesLost[ID] > maxNumFramesLost) {
-                                   deRegister(ID);
+                                   rmIds.push_back(ID);
                               } else {
                                    filters[ID].autoUpdate();
                                    targets[ID] = (filters[ID].getCurrState())({0,1}, 0);
@@ -282,6 +289,10 @@ class KalmanNN : public Tracker {
                     }
                }
           }
+
+          // Deregister missing targets.
+          for (auto ID : rmIds)
+               deRegister(ID)
 
           return;
      }
