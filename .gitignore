@@ -1,4 +1,4 @@
 test/
-lroc/dbgmphdLROC.hpp
-lroc/dbknnLROC.hpp
-lroc/msknnLROC.hpp
+/lroc/dbgmphdLROC.hpp
+/lroc/dbknnLROC.hpp
+/lroc/msknnLROC.hpp
