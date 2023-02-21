@@ -292,7 +292,7 @@ class KalmanNN : public Tracker {
 
           // Deregister missing targets.
           for (auto ID : rmIds)
-               deRegister(ID)
+               deRegister(ID);
 
           return;
      }
